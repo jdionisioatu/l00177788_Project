@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  pushtoregistery:
+  pushtoregistry:
     runs-on: ubuntu-latest
     steps:
       - name: login to GitHub Container Registry
