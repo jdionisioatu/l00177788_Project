@@ -39,7 +39,7 @@ jobs:
     - name: Restore dependencies
       run: cd CodeScanning; dotnet restore
     - name: Publish
-      run: cd CodeScanning; dotnet publish --no-build --configuration Release --output publish
+      run: cd CodeScanning; dotnet publish --no-build --configuration Release
     - name: Test
       run: cd NUnitTets; dotnet test --no-build --verbosity normal
     - name: Login to Github Container Registry
