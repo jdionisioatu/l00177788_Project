@@ -25,21 +25,38 @@ jobs:
       uses: github/codeql-action/autobuild@v3
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
-  
-  
-  
-  
-#  pushtoregistry:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: login to GitHub Container Registry
-#        uses: docker/login-action@v2
-#        with:
-#          registry: ghcr.io
-#          username: ${{ github.actor }}
-#          password: ${{ secrets.GITHUB_TOKEN }}
-#      - uses: actions/checkout@v3
-#      - name: create image from repository
-#        run: docker build -t ghcr.io/${{ github.actor }}/project .
-#      - name: push image to GitHub Container Registry
-#        run: docker push ghcr.io/${{ github.actor }}/project:latest
+
+  build_and_test:
+    needs: code_scanning
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Publish
+      run: dotnet publish --no-build --configuration Release --output publish
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+    - name: Login to Github Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrects.GITHUB_TOKEN
+    - name: Create prod image from repository
+      if: github.ref == 'refs/heads/main'
+      with:
+        file: CodeScanning/Dockerfile
+        secret-envs: env=prod, DB_PASS_PROD={{ secrets.DB_PASS_PROD }}, DB_USER_PROD={{ secrets.DB_USER_PROD }},
+        tags: prod
+    - name: Create dev image from repository
+      if: github.ref == 'refs/heads/dev'
+      with:
+        file: CodeScanning/Dockerfile
+        secret-envs: env=prod, DB_PASS_DEV={{ secrets.DB_PASS_PROD }}, DB_USER_DEV={{ secrets.DB_USER_PROD }},
+        tags: prod
