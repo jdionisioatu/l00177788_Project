@@ -37,11 +37,11 @@ jobs:
       with:
         dotnet-version: 8.0
     - name: Restore dependencies
-      run: dotnet restore
+      run: cd CodeScanning; dotnet restore
     - name: Publish
-      run: dotnet publish --no-build --configuration Release --output publish
+      run: cd CodeScanning; dotnet publish --no-build --configuration Release --output publish
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: cd NUnitTets; dotnet test --no-build --verbosity normal
     - name: Login to Github Container Registry
       uses: docker/login-action@v3
       with:
