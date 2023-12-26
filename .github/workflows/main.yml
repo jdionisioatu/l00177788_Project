@@ -53,7 +53,7 @@ jobs:
       if: github.ref == 'refs/heads/main'
       with:
         context: ./CodeScanning
-        file: ./Dockerfile
+        file: ./CodeScanning/Dockerfile
         secret-envs: env=prod, DB_PASS_PROD=${{ secrets.DB_PASS_PROD }}, DB_USER_PROD=${{ secrets.DB_USER_PROD }}
         tags: prod
     - name: Create dev image from repository
@@ -61,6 +61,6 @@ jobs:
       if: github.ref == 'refs/heads/dev'
       with:
         context: ./CodeScanning
-        file: ./Dockerfile
+        file: ./CodeScanning/Dockerfile
         secret-envs: env=dev, DB_PASS_DEV={{ secrets.DB_PASS_PROD }}, DB_USER_DEV={{ secrets.DB_USER_PROD }}
         tags: prod
