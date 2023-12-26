@@ -5,7 +5,7 @@ on:
     branches: [ main, dev ]
   pull_request:
     branches: [ main, dev ]
-    types: [ open, synchromize, reopened ]
+    types: [ open, synchronize, reopened ]
 
 jobs:
   code_scanning:
