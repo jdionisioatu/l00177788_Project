@@ -92,7 +92,7 @@ jobs:
       - name: Deploy dev to on-perm server
         uses: garygrossgarten/github-action-ssh@0.7.0
         with:
-          command: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u jdionisioatu --password-stdin; docker pull ghcr.io/jdionisioatu/dev:latest; docker stop dev; docker container prune -f; docker run --name dev -d -p 127.0.0.1:8100:8080/tcp ghcr.io/jdionisioatu/dev 
+          command: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u jdionisioatu --password-stdin; docker pull ghcr.io/jdionisioatu/dev:latest; docker stop dev; docker container prune -f; docker run --env env=dev --env DB_PASS={{ secrets.DB_PASS_DEV }} --env DB_USER={{ secrets.DB_USER_DEV }} --name dev -d -p 127.0.0.1:8100:8080/tcp ghcr.io/jdionisioatu/dev 
           host: ${{ secrets.HOST }}
           username: ${{ secrets.SSH_USER }}
           port: ${{ secrets.SSH_PORT }}
@@ -106,7 +106,7 @@ jobs:
       - name: Deploy dev to on-perm server
         uses: garygrossgarten/github-action-ssh@0.7.0
         with:
-          command: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u jdionisioatu --password-stdin; docker pull ghcr.io/jdionisioatu/prod:latest; docker stop prod; docker container prune -f; docker run --name prod -d -p 127.0.0.1:8100:8080/tcp ghcr.io/jdionisioatu/prod 
+          command: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u jdionisioatu --password-stdin; docker pull ghcr.io/jdionisioatu/prod:latest; docker stop prod; docker container prune -f; docker run --env env=prod --env DB_PASS=${{ secrets.DB_PASS_PROD }} --env DB_USER=${{ secrets.DB_USER_PROD }} --name prod -d -p 127.0.0.1:8100:8080/tcp ghcr.io/jdionisioatu/prod 
           host: ${{ secrets.HOST }}
           username: ${{ secrets.SSH_USER }}
           port: ${{ secrets.SSH_PORT }}
