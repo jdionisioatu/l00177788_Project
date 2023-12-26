@@ -6,6 +6,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+if (Environment.GetEnvironmentVariable("env") == "prod")
+{
+    connectionString = builder.Configuration.GetConnectionString("ProdConnection");
+    connectionString += ",User=" + Environment.GetEnvironmentVariable("DB_USER") + ",Password=" + Environment.GetEnvironmentVariable("DB_PASSWORD");
+}
+if (Environment.GetEnvironmentVariable("env") == "dev")
+{
+    connectionString = builder.Configuration.GetConnectionString("DevConnection");
+    connectionString += ",User=" + Environment.GetEnvironmentVariable("DB_USER") + ",Password=" + Environment.GetEnvironmentVariable("DB_PASSWORD");
+}
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
