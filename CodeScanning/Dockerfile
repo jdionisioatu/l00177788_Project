@@ -21,5 +21,8 @@ RUN dotnet publish "./CodeScanning.csproj" -c $BUILD_CONFIGURATION -o /app/publi
 
 FROM base AS final
 WORKDIR /app
+ENV env=${env}
+ENV DB_USER=${DB_USER}
+ENV DB_PASSWORD=${DB_PASSWORD}
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "CodeScanning.dll"]
