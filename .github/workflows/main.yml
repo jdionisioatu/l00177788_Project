@@ -88,7 +88,7 @@ jobs:
     if: github.ref == 'refs/heads/dev'
     steps:
       - name: Deploy dev to on-perm server
-        uses: garygrossgarten/github-action-ssh@0.7.0
+        uses: Flaavius/ssh-commands@1.0
         with:
           command: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u jdionisioatu --password-stdin; docker pull ghcr.io/jdionisioatu/dev:latest; docker stop dev; docker run --name dev -p 127.0.0.1:8090:8080/tcp dev
           host: ${{ secrets.HOST }}
@@ -102,7 +102,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Deploy dev to on-perm server
-        uses: garygrossgarten/github-action-ssh@0.7.0
+        uses: Flaavius/ssh-commands@1.0
         with:
           command: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u jdionisioatu --password-stdin; docker pull ghcr.io/jdionisioatu/prod:latest; docker stop prod; docker run --name prod -p 127.0.0.1:8100:8080/tcp prod
           host: ${{ secrets.HOST }}
