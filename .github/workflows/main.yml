@@ -29,25 +29,39 @@ jobs:
   build_and_test:
     needs: code_scanning
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet-version: [ '6.0', '8.0' ]
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8.0
+        dotnet-version: ${{ matrix.dotnet-version }}
     - name: Restore dependencies
       run: dotnet restore CodeScanning
     - name: Build
       run: dotnet build --no-restore CodeScanning
     - name: Run Unit Tests
-      run: dotnet test --no-build --verbosity normal CodeScanning
+      run: dotnet test --no-build --logger trx --results-directory "TestResults-${{ matrix.dotnet-version }}" CodeScanning
+    - name: Upload dotnet test results
+      uses: actions/upload-artifact@v3
+      with:
+        name: dotnet-results-${{ matrix.dotnet-version }}
+        path: TestResults-${{ matrix.dotnet-version }}
+      if: ${{ always() }}
     - name: Login to Github Container Registry
       uses: docker/login-action@v3
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
+    
+  create_images:
+    needs: build_and_test
+    runs-on: ubuntu-latest
+    steps:
     - name: Create prod image from repository
       uses: docker/build-push-action@v5.1.0
       if: github.ref == 'refs/heads/main'
