@@ -69,6 +69,7 @@ jobs:
       uses: docker/build-push-action@v5.1.0
       if: github.ref == 'refs/heads/main'
       with:
+        push: true
         context: ./CodeScanning
         file: ./CodeScanning/Dockerfile
         secret-envs: env=prod, DB_PASS=${{ secrets.DB_PASS_PROD }}, DB_USER=${{ secrets.DB_USER_PROD }}
@@ -77,6 +78,7 @@ jobs:
       uses: docker/build-push-action@v5.1.0
       if: github.ref == 'refs/heads/dev'
       with:
+        push: true
         context: ./CodeScanning
         file: ./CodeScanning/Dockerfile
         secret-envs: env=dev, DB_PASS={{ secrets.DB_PASS_DEV }}, DB_USER={{ secrets.DB_USER_DEV }}
