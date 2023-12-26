@@ -69,15 +69,46 @@ jobs:
       uses: docker/build-push-action@v5.1.0
       if: github.ref == 'refs/heads/main'
       with:
+        push: true
         context: ./CodeScanning
         file: ./CodeScanning/Dockerfile
         secret-envs: env=prod, DB_PASS=${{ secrets.DB_PASS_PROD }}, DB_USER=${{ secrets.DB_USER_PROD }}
-        tags: prod
+        tags: ghcr.io/jdionisioatu/prod:latest
     - name: Create dev image from repository
       uses: docker/build-push-action@v5.1.0
       if: github.ref == 'refs/heads/dev'
       with:
+        push: true
         context: ./CodeScanning
         file: ./CodeScanning/Dockerfile
         secret-envs: env=dev, DB_PASS={{ secrets.DB_PASS_DEV }}, DB_USER={{ secrets.DB_USER_DEV }}
-        tags: dev
+        tags: ghcr.io/jdionisioatu/dev:latest
+
+  deploy_to_dev:
+    needs: create_images
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/dev'
+    steps:
+      - name: Deploy dev to on-perm server
+        uses: garygrossgarten/github-action-ssh@0.7.0
+        with:
+          command: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u jdionisioatu --password-stdin; docker pull ghcr.io/jdionisioatu/dev:latest; docker stop dev; docker container prune -f; docker run --env env=dev --env DB_PASS={{ secrets.DB_PASS_DEV }} --env DB_USER={{ secrets.DB_USER_DEV }} --name dev -d -p 127.0.0.1:8100:8080/tcp ghcr.io/jdionisioatu/dev 
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          privateKey: ${{ secrets.SSH_PRIV_KEY }}
+
+  deploy_to_prod:
+    needs: create_images
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Deploy dev to on-perm server
+        uses: garygrossgarten/github-action-ssh@0.7.0
+        with:
+          command: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u jdionisioatu --password-stdin; docker pull ghcr.io/jdionisioatu/prod:latest; docker stop prod; docker container prune -f; docker run --env env=prod --env DB_PASS=${{ secrets.DB_PASS_PROD }} --env DB_USER=${{ secrets.DB_USER_PROD }} --name prod -d -p 127.0.0.1:8100:8080/tcp ghcr.io/jdionisioatu/prod 
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          privateKey: ${{ secrets.SSH_PRIV_KEY }}
+
