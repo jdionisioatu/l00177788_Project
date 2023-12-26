@@ -52,13 +52,15 @@ jobs:
       uses: docker/build-push-action@v5.1.0
       if: github.ref == 'refs/heads/main'
       with:
-        file: CodeScanning/Dockerfile
+        context: ./CodeScanning
+        file: ./Dockerfile
         secret-envs: env=prod, DB_PASS_PROD=${{ secrets.DB_PASS_PROD }}, DB_USER_PROD=${{ secrets.DB_USER_PROD }}
         tags: prod
     - name: Create dev image from repository
       uses: docker/build-push-action@v5.1.0
       if: github.ref == 'refs/heads/dev'
       with:
-        file: CodeScanning/Dockerfile
-        secret-envs: env=prod, DB_PASS_DEV={{ secrets.DB_PASS_PROD }}, DB_USER_DEV={{ secrets.DB_USER_PROD }}
+        context: ./CodeScanning
+        file: ./Dockerfile
+        secret-envs: env=dev, DB_PASS_DEV={{ secrets.DB_PASS_PROD }}, DB_USER_DEV={{ secrets.DB_USER_PROD }}
         tags: prod
