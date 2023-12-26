@@ -71,7 +71,7 @@ jobs:
       with:
         context: ./CodeScanning
         file: ./CodeScanning/Dockerfile
-        secret-envs: env=prod, DB_PASS_PROD=${{ secrets.DB_PASS_PROD }}, DB_USER_PROD=${{ secrets.DB_USER_PROD }}
+        secret-envs: env=prod, DB_PASS=${{ secrets.DB_PASS_PROD }}, DB_USER=${{ secrets.DB_USER_PROD }}
         tags: prod
     - name: Create dev image from repository
       uses: docker/build-push-action@v5.1.0
@@ -79,5 +79,5 @@ jobs:
       with:
         context: ./CodeScanning
         file: ./CodeScanning/Dockerfile
-        secret-envs: env=dev, DB_PASS_DEV={{ secrets.DB_PASS_PROD }}, DB_USER_DEV={{ secrets.DB_USER_PROD }}
+        secret-envs: env=dev, DB_PASS={{ secrets.DB_PASS_DEV }}, DB_USER={{ secrets.DB_USER_DEV }}
         tags: prod
