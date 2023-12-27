@@ -23,6 +23,6 @@ FROM base AS final
 WORKDIR /app
 ENV env=${env}
 ENV DB_USER=${DB_USER}
-ENV DB_PASSWORD=${DB_PASSWORD}
+ENV DB_PASS=${DB_PASS}
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "CodeScanning.dll"]

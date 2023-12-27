@@ -9,12 +9,12 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 if (Environment.GetEnvironmentVariable("env") == "prod")
 {
     connectionString = builder.Configuration.GetConnectionString("ProdConnection");
-    connectionString += ";User Id=" + Environment.GetEnvironmentVariable("DB_USER") + ";Password=" + Environment.GetEnvironmentVariable("DB_PASSWORD");
+    connectionString += ";User Id=" + Environment.GetEnvironmentVariable("DB_USER") + ";Password=" + Environment.GetEnvironmentVariable("DB_PASS");
 }
 if (Environment.GetEnvironmentVariable("env") == "dev")
 {
     connectionString = builder.Configuration.GetConnectionString("DevConnection");
-    connectionString += ";User Id=" + Environment.GetEnvironmentVariable("DB_USER") + ";Password=" + Environment.GetEnvironmentVariable("DB_PASSWORD");
+    connectionString += ";User Id=" + Environment.GetEnvironmentVariable("DB_USER") + ";Password=" + Environment.GetEnvironmentVariable("DB_PASS");
 }
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
