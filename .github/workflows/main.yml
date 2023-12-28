@@ -113,7 +113,7 @@ jobs:
           privateKey: ${{ secrets.SSH_PRIV_KEY }}
 
   deploy_to_prod:
-    needs: create_images
+    needs: create_images_and_scan
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
