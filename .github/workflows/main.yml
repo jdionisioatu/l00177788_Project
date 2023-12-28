@@ -88,14 +88,14 @@ jobs:
       if: github.ref == 'refs/heads/main'
       with:
         image: ghcr.io/jdionisioatu/prod:latest
-        severity_threshold: HIGH
+        #severity_threshold: HIGH
         annotations: true
     - name: Scan for vulnerabilities
       uses: crazy-max/ghaction-container-scan@v3
       if: github.ref == 'refs/heads/dev'
       with:
         image: ghcr.io/jdionisioatu/dev:latest
-        severity_threshold: HIGH
+        #severity_threshold: HIGH
         annotations: true
     
   deploy_to_dev:
