@@ -85,18 +85,33 @@ jobs:
         tags: ghcr.io/jdionisioatu/dev:latest
     - name: Scan for vulnerabilities
       uses: crazy-max/ghaction-container-scan@v3
+      id: scan_prod
       if: github.ref == 'refs/heads/main'
       with:
+        dockerfile: ./CodeScanning/Dockerfile
         image: ghcr.io/jdionisioatu/prod:latest
         #severity_threshold: HIGH
         annotations: true
     - name: Scan for vulnerabilities
       uses: crazy-max/ghaction-container-scan@v3
+      id: scan_dev
       if: github.ref == 'refs/heads/dev'
       with:
+        dockerfile: ./CodeScanning/Dockerfile
         image: ghcr.io/jdionisioatu/dev:latest
         #severity_threshold: HIGH
         annotations: true
+    - name: Upload SARIF file prod
+      if: ${{ steps.scan_prod.outputs.sarif != '' && github.ref == 'refs/heads/main' }}
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: ${{ steps.scan_prod.outputs.sarif }}
+    - name: Upload SARIF file dev
+      if: ${{ steps.scan_dev.outputs.sarif != '' && github.ref == 'refs/heads/dev' }}
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: ${{ steps.scan_dev.outputs.sarif }}
+    
     
   deploy_to_dev:
     needs: create_images_and_scan
