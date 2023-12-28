@@ -53,7 +53,7 @@ jobs:
       if: ${{ always() }}
     
     
-  create_images:
+  create_images_and_scan:
     needs: build_and_test
     runs-on: ubuntu-latest
     steps:
@@ -83,9 +83,23 @@ jobs:
         file: ./CodeScanning/Dockerfile
         secret-envs: env=dev, DB_PASS={{ secrets.DB_PASS_DEV }}, DB_USER={{ secrets.DB_USER_DEV }}
         tags: ghcr.io/jdionisioatu/dev:latest
-
+    - name: Scan for vulnerabilities
+      uses: crazy-max/ghaction-container-scan@v3
+      if: github.ref == 'refs/heads/main'
+      with:
+        image: ghcr.io/jdionisioatu/prod:latest
+        #severity_threshold: HIGH
+        annotations: true
+    - name: Scan for vulnerabilities
+      uses: crazy-max/ghaction-container-scan@v3
+      if: github.ref == 'refs/heads/dev'
+      with:
+        image: ghcr.io/jdionisioatu/dev:latest
+        #severity_threshold: HIGH
+        annotations: true
+    
   deploy_to_dev:
-    needs: create_images
+    needs: create_images_and_scan
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/dev'
     steps:
@@ -99,7 +113,7 @@ jobs:
           privateKey: ${{ secrets.SSH_PRIV_KEY }}
 
   deploy_to_prod:
-    needs: create_images
+    needs: create_images_and_scan
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
