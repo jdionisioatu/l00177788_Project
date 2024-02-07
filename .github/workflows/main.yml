@@ -103,12 +103,12 @@ jobs:
         annotations: true
     - name: Upload SARIF file prod
       if: ${{ steps.scan_prod.outputs.sarif != '' && github.ref == 'refs/heads/main' }}
-      uses: github/codeql-action/upload-sarif@v2
+      uses: github/codeql-action/upload-sarif@v3
       with:
         sarif_file: ${{ steps.scan_prod.outputs.sarif }}
     - name: Upload SARIF file dev
       if: ${{ steps.scan_dev.outputs.sarif != '' && github.ref == 'refs/heads/dev' }}
-      uses: github/codeql-action/upload-sarif@v2
+      uses: github/codeql-action/upload-sarif@v3
       with:
         sarif_file: ${{ steps.scan_dev.outputs.sarif }}
     
