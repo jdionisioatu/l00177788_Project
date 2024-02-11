@@ -12,9 +12,9 @@ namespace CodeScanning.Pages
             _logger = logger;
         }
 
-        public void OnGet()
+        public async Task<IActionResult> OnGetAsync()
         {
-
+            return Page();
         }
     }
 }

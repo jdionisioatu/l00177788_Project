@@ -1,0 +1,56 @@
+﻿@model CodeScanning.ViewModels.SettingsFormViewModel
+@using Microsoft.AspNetCore.Identity
+@using CodeScanning
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@{
+    ViewBag.Title = Model.ActionName;
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+@if (SignInManager.IsSignedIn(User))
+{
+<h2>@ViewBag.Title.</h2>
+
+@using (Html.BeginForm(Model.ActionName, "Settings", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    if (Model.IsUpdate)
+    {
+        @Html.HiddenFor(m => m.Settings.Id)
+    }
+    <div class="form-group">
+        @Html.LabelFor(m => m.Settings.gitHubApiType, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor( m => m.Settings.gitHubApiType, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Settings.gitHubApiType, "", new { @class = "text-danger"})
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Settings.gitHubToken, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.PasswordFor(m => m.Settings.gitHubToken, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Settings.gitHubToken, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Settings.defectDojoApiToken, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.PasswordFor(m => m.Settings.defectDojoApiToken, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Settings.defectDojoApiToken, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-primary" value="Save" />
+        </div>
+    </div>
+    }
+} else
+{
+    <h1> Access Denied</h1>
+}
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

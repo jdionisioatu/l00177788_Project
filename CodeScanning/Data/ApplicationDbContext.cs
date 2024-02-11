@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using CodeScanning.Models;
 
 namespace CodeScanning.Data
 {
@@ -9,5 +10,6 @@ namespace CodeScanning.Data
             : base(options)
         {
         }
+        public DbSet<CodeScanning.Models.Settings> Settings { get; set; } = default!;
     }
 }

@@ -1,10 +1,14 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using CodeScanning
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
 
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))
 {
+    <li class="nav-item>">
+        <a class="nav-link text-dark" asp-area="" asp-action="Create" asp-controller="Settings" title="Settings">Settings</a>
+    </li>
     <li class="nav-item">
         <a  class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>
     </li>
