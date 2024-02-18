@@ -9,6 +9,9 @@ using CodeScanning.Data;
 using CodeScanning.Models;
 using CodeScanning.ViewModels;
 
+using Docker.DotNet;
+using Docker.DotNet.Models;
+
 namespace CodeScanning.Controllers
 {
     public class SettingsController : Controller
@@ -104,6 +107,16 @@ namespace CodeScanning.Controllers
                 }
                 
              }
+
+            DockerClient client = new DockerClientConfiguration().CreateClient();
+            await client.Containers.CreateContainerAsync(new CreateContainerParameters()
+            {
+                Image = "fedora/memcached",
+                HostConfig = new HostConfig()
+                {
+                    DNS = new[] { "8.8.8.8", "8.8.4.4" }
+                }
+            });
             return RedirectToAction("Index", "Home");
         }
 
