@@ -11,7 +11,7 @@
 {
     <!--<h2>@ViewBag.Title.</h2>-->
         @Html.AntiForgeryToken()
-        <div class="text-center">
+        <div class="form-group">
             <h1 class="display-4">Repositories found</h1>
             <table>
                 <tr>
@@ -21,11 +21,23 @@
                 </tr>  
         @foreach (var repositories in Model.GitHubApiServiceModel.repositories)
         {
-            <tr>
-                <td>@repositories.Id</td>
-                <td>@repositories.Name</td>
-                <td>Placeholder for submit button</td>
-            </tr>
+                @using (Html.BeginForm("Scan", "LaunchScan", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="Id" name="Id" value="@repositories.Id"/>
+                    <input type="hidden" id="Name" name="Name" value="@repositories.Name" />
+                    <tr>
+                        <td>@repositories.Id</td>
+                        <td>@repositories.Name</td>
+                        <td>
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <input type="submit" class="btn btn-primary" value="Launch Scan for this repository" />
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
         }
         </table>
     </div>
