@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 using CodeScanning.Data;
 using CodeScanning.Models;
@@ -108,7 +109,7 @@ namespace CodeScanning.Controllers
                 
              }
 
-            DockerClient client = new DockerClientConfiguration().CreateClient();
+            /*DockerClient client = new DockerClientConfiguration().CreateClient();
             await client.Containers.CreateContainerAsync(new CreateContainerParameters()
             {
                 Image = "fedora/memcached",
@@ -116,7 +117,7 @@ namespace CodeScanning.Controllers
                 {
                     DNS = new[] { "8.8.8.8", "8.8.4.4" }
                 }
-            });
+            });*/
             return RedirectToAction("Index", "Home");
         }
 

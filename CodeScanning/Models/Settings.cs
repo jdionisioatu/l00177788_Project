@@ -10,8 +10,11 @@ namespace CodeScanning.Models
 		public int Id { get; set; }
 
 		[Required(ErrorMessage = "Github API Type is Required")]
-		[AllowedValues("Organization","Individual", ErrorMessage = "Github API Type must be either Individual or Organization")]
+        [AllowedValues("Organization","Individual", ErrorMessage = "Github API Type must be either Individual or Organization")]
 		public string gitHubApiType { get; set; }
+
+		[Required(ErrorMessage = "GitHub username or Organization name is required")]
+		public string gitHubUserNameOrOrgName { get; set; }
 
 		[Required(ErrorMessage = "A GitHub Pat is required")]
 		[RegularExpression("^(gh[ps]_[a-zA-Z0-9]{36}|github_pat_[a-zA-Z0-9]{22}_[a-zA-Z0-9]{59})$", ErrorMessage="The GitHub token must be a valid GitHub token.")]

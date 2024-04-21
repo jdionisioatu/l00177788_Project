@@ -1,0 +1,41 @@
+﻿@model CodeScanning.ViewModels.LaunchScanViewModel
+@using Microsoft.AspNetCore.Identity
+@using CodeScanning
+@using CodeScanning.Controllers
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@{
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+@if (SignInManager.IsSignedIn(User))
+{
+    <!--<h2>@ViewBag.Title.</h2>-->
+        @Html.AntiForgeryToken()
+        <div class="text-center">
+            <h1 class="display-4">Repositories found</h1>
+            <table>
+                <tr>
+                    <th>Github repository ID</th>
+                    <th>Github repository name</th>
+                    <th>Launch Scan</th>
+                </tr>  
+        @foreach (var repositories in Model.GitHubApiServiceModel.repositories)
+        {
+            <tr>
+                <td>@repositories.Id</td>
+                <td>@repositories.Name</td>
+                <td>Placeholder for submit button</td>
+            </tr>
+        }
+        </table>
+    </div>
+}
+else
+{
+    <h1> Access Denied</h1>
+}
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

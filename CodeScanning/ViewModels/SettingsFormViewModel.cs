@@ -1,5 +1,7 @@
 ﻿using CodeScanning.Controllers;
 using CodeScanning.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace CodeScanning.ViewModels
 {
@@ -13,9 +15,10 @@ namespace CodeScanning.ViewModels
 
 		public string ActionName => IsUpdate ? nameof(SettingsController.Update) : nameof(SettingsController.Create);
 
-		public SettingsFormViewModel()
+        public SettingsFormViewModel()
 		{
 			Settings = new Settings();
+
 		}
 	}
 }
