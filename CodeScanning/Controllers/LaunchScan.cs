@@ -7,6 +7,9 @@ using System.Net.Http.Headers;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Formats.Tar;
+using ICSharpCode.SharpZipLib.Tar;
+using Docker.DotNet.Models;
+using Docker.DotNet;
 
 
 namespace CodeScanning.Controllers
@@ -14,11 +17,13 @@ namespace CodeScanning.Controllers
     public class LaunchScan : Controller
     {
         private readonly ApplicationDbContext _context;
-       
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public LaunchScan(ApplicationDbContext context)
+
+        public LaunchScan(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public async Task<IActionResult> Index()
@@ -55,8 +60,15 @@ namespace CodeScanning.Controllers
         public async Task<IActionResult> Scan(int Id, string Name)
         {
             var settings = _context.Settings.FirstOrDefault();
+            var imageBuildParameters = new ImageBuildParameters
+            {
 
-
+            };
+            string fullPath = _webHostEnvironment.WebRootPath + "/docker";
+            using var tarball = CreateTarballForDockerfileDirectory(fullPath);
+            using var dockerClient = new DockerClientConfiguration().CreateClient();
+            using var responseStream = await dockerClient.Images.BuildImageFromDockerfileAsync(tarball, imageBuildParameters);
+            tarball.Dispose();
             return RedirectToAction("Index", "Home");
         }
 
@@ -77,8 +89,8 @@ namespace CodeScanning.Controllers
                 string tarName = file.Substring(directory.Length).Replace('\\', '/').TrimStart('/');
 
                 //Let's create the entry header
-                var entry = TarEntry.CreateTarEntry(tarName);
-                using var fileStream = File.OpenRead(file);
+                var entry = ICSharpCode.SharpZipLib.Tar.TarEntry.CreateTarEntry(tarName);
+                using var fileStream = System.IO.File.OpenRead(file);
                 entry.Size = fileStream.Length;
                 entry.TarHeader.Mode = Convert.ToInt32("100755", 8); //chmod 755
                 archive.PutNextEntry(entry);

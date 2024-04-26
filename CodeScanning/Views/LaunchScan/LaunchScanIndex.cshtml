@@ -17,6 +17,7 @@
                 <tr>
                     <th>Github repository ID</th>
                     <th>Github repository name</th>
+                    <th>Branch</th>
                     <th>Launch Scan</th>
                 </tr>  
         @foreach (var repositories in Model.GitHubApiServiceModel.repositories)
@@ -29,6 +30,24 @@
                     <tr>
                         <td>@repositories.Id</td>
                         <td>@repositories.Name</td>
+                        <td>
+							<select id="Branch" name="Branch">
+                                @{
+                                    var first = true;
+                                }
+								@foreach (var branch in repositories.Branches)
+								{
+                                    if (first)
+									{
+										<option value="@branch" selected>@branch</option>
+										first = false;
+									}
+									else
+									{
+										<option value="@branch">@branch</option>
+									}
+								}
+							</select>
                         <td>
                             <div class="form-group">
                                 <div class="col-md-offset-2 col-md-10">
