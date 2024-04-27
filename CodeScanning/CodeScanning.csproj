@@ -26,11 +26,9 @@
     <PackageReference Include="SharpZipLib" Version="1.4.2" />
   </ItemGroup>
 	<ItemGroup>
-		<!--This is denied by .net-->
-		<!--<Content Update="wwwroot\docker\Dockerfile">-->
-		<!--	<CopyToOutputDirectory>Always</CopyToOutputDirectory>-->
-		<!--</Content>-->
-		
+		<Content Update="wwwroot\docker\Dockerfile">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 		<Content Update="wwwroot\docker\99microsoft-dotnet.pref">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
@@ -49,10 +47,8 @@
 		<Content Update="wwwroot\docker\container\libs\github.py">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
-		<Content Update="wwwroot\docker\dockerfile.temp">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
-		<Content Update="wwwroot\docker\scripts\analyze.sh">
+		<Content Update="wwwroot\docker\Dockerfile">
+<Content Update="wwwroot\docker\scripts\analyze.sh">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
