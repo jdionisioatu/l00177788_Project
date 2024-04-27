@@ -10,6 +10,8 @@ using System.Formats.Tar;
 using ICSharpCode.SharpZipLib.Tar;
 using Docker.DotNet.Models;
 using Docker.DotNet;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using static System.Net.WebRequestMethods;
 
 
 namespace CodeScanning.Controllers
@@ -57,17 +59,31 @@ namespace CodeScanning.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Scan(int Id, string Name)
+        public async Task<IActionResult> Scan(int Id, string Name, string Branch)
         {
             var settings = _context.Settings.FirstOrDefault();
+            var buildargs = new Dictionary<string, string>
+            {
+                { "repository_name", Name },
+                { "branch", Branch },
+                { "defectdojourl", "https://defectdojo.collegefan.org" },
+                { "defectdojotoken", settings.defectDojoApiToken },
+                { "giturl",  "https://" + settings.gitHubUserNameOrOrgName + ":" +
+                    settings.gitHubToken + "@github.com/" + settings.gitHubUserNameOrOrgName + "/" + Name + ".git"}
+            };
             var imageBuildParameters = new ImageBuildParameters
             {
-
+                BuildArgs = buildargs,
+                Tags = ["code-scanning"]
             };
             string fullPath = _webHostEnvironment.WebRootPath + "/docker";
             using var tarball = CreateTarballForDockerfileDirectory(fullPath);
             using var dockerClient = new DockerClientConfiguration().CreateClient();
-            using var responseStream = await dockerClient.Images.BuildImageFromDockerfileAsync(tarball, imageBuildParameters);
+            IProgress<JSONMessage> progress1 = new Progress<JSONMessage>();
+            IEnumerable<AuthConfig> authConfig = new List<AuthConfig>();
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            await dockerClient.Images.BuildImageFromDockerfileAsync(imageBuildParameters, tarball, authConfig, headers, progress1);
+
             tarball.Dispose();
             return RedirectToAction("Index", "Home");
         }
