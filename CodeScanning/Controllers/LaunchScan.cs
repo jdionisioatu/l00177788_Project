@@ -62,74 +62,46 @@ namespace CodeScanning.Controllers
         public async Task<IActionResult> Scan(int Id, string Name, string Branch)
         {
             var settings = _context.Settings.FirstOrDefault();
+            string giturl = "https://" + settings.gitHubUserNameOrOrgName + ":" +
+                    settings.gitHubToken + "@github.com/" + settings.gitHubUserNameOrOrgName + "/" + Name + ".git";
             var buildargs = new Dictionary<string, string>
             {
                 { "repository_name", Name },
                 { "branch", Branch },
                 { "defectdojourl", "https://defectdojo.collegefan.org" },
                 { "defectdojotoken", settings.defectDojoApiToken },
-                { "giturl",  "https://" + settings.gitHubUserNameOrOrgName + ":" +
-                    settings.gitHubToken + "@github.com/" + settings.gitHubUserNameOrOrgName + "/" + Name + ".git"}
+                { "giturl",  giturl}
             };
+
+            const string allowedChars = "0123456789abcdefghijklmnopqrstuvwxyz";
+            Random rnd = new Random();
+            string randomStringImageName = (Name + LaunchScanHelpers.RandomString(rnd, allowedChars, (10, 10))).ToLower(); 
             var imageBuildParameters = new ImageBuildParameters
             {
                 BuildArgs = buildargs,
-                Tags = ["code-scanning"]
+                Tags = [randomStringImageName]
             };
             string fullPath = _webHostEnvironment.WebRootPath + "/docker";
-            using var tarball = CreateTarballForDockerfileDirectory(fullPath);
+            using var tarball = LaunchScanHelpers.CreateTarballForDockerfileDirectory(fullPath);
             using var dockerClient = new DockerClientConfiguration().CreateClient();
             IProgress<JSONMessage> progress1 = new Progress<JSONMessage>();
             IEnumerable<AuthConfig> authConfig = new List<AuthConfig>();
             Dictionary<string, string> headers = new Dictionary<string, string>();
             await dockerClient.Images.BuildImageFromDockerfileAsync(imageBuildParameters, tarball, authConfig, headers, progress1);
-
             tarball.Dispose();
-            return RedirectToAction("Index", "Home");
-        }
 
-        private static Stream CreateTarballForDockerfileDirectory(string directory)
-        {
-            var tarball = new MemoryStream();
-            var files = Directory.GetFiles(directory, "*.*", SearchOption.AllDirectories);
-
-            using var archive = new TarOutputStream(tarball)
+            var containerParameters = new CreateContainerParameters
             {
-                //Prevent the TarOutputStream from closing the underlying memory stream when done
-                IsStreamOwner = false
+                Name = randomStringImageName + "run",
+                ArgsEscaped = true,
+                Image = randomStringImageName,
+                Env = [ "defectdojourl=https://defectdojo.collegefan.org", "defectdojotoken=" + settings.defectDojoApiToken,
+                    "branch=" + Branch, "giturl=\"" + giturl + "\"", "repository_name=" + Name ]
             };
+            CreateContainerResponse createdContainer = await dockerClient.Containers.CreateContainerAsync(containerParameters);
 
-            foreach (var file in files)
-            {
-                //Replacing slashes as KyleGobel suggested and removing leading /
-                string tarName = file.Substring(directory.Length).Replace('\\', '/').TrimStart('/');
-
-                //Let's create the entry header
-                var entry = ICSharpCode.SharpZipLib.Tar.TarEntry.CreateTarEntry(tarName);
-                using var fileStream = System.IO.File.OpenRead(file);
-                entry.Size = fileStream.Length;
-                entry.TarHeader.Mode = Convert.ToInt32("100755", 8); //chmod 755
-                archive.PutNextEntry(entry);
-
-                //Now write the bytes of data
-                byte[] localBuffer = new byte[32 * 1024];
-                while (true)
-                {
-                    int numRead = fileStream.Read(localBuffer, 0, localBuffer.Length);
-                    if (numRead <= 0)
-                        break;
-
-                    archive.Write(localBuffer, 0, numRead);
-                }
-
-                //Nothing more to do with this entry
-                archive.CloseEntry();
-            }
-            archive.Close();
-
-            //Reset the stream and return it, so it can be used by the caller
-            tarball.Position = 0;
-            return tarball;
+            await dockerClient.Containers.StartContainerAsync(createdContainer.ID, new ContainerStartParameters());
+            return RedirectToAction("Index", "Home");
         }
     }
 }
