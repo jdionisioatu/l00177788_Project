@@ -3,7 +3,6 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
-COPY ./wwwroot/docker/Dockerfile /app/wwwroot/Dockerfile
 EXPOSE 8080
 EXPOSE 8081
 
@@ -13,6 +12,7 @@ WORKDIR /src
 COPY ["CodeScanning.csproj", "."]
 RUN dotnet restore "./././CodeScanning.csproj"
 COPY . .
+COPY ./wwwroot/docker/Dockerfile /app/wwwroot/Dockerfile
 WORKDIR "/src/."
 RUN dotnet build "./CodeScanning.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
