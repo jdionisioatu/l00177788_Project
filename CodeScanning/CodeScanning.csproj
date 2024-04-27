@@ -47,8 +47,7 @@
 		<Content Update="wwwroot\docker\container\libs\github.py">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
-		<Content Update="wwwroot\docker\Dockerfile">
-<Content Update="wwwroot\docker\scripts\analyze.sh">
+		<Content Update="wwwroot\docker\scripts\analyze.sh">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
