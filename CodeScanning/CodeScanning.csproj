@@ -25,6 +25,12 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.0" />
     <PackageReference Include="SharpZipLib" Version="1.4.2" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="wwwroot\docker\Dockerfile">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
 	<ItemGroup>
 		<!--This is denied by .net-->
 		<!--<Content Update="wwwroot\docker\Dockerfile">-->
@@ -48,9 +54,6 @@
 		</Content>
 		<Content Update="wwwroot\docker\container\libs\github.py">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
-		<Content Update="wwwroot\docker\Dockerfile">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 		<Content Update="wwwroot\docker\scripts\analyze.sh">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
