@@ -12,7 +12,6 @@ WORKDIR /src
 COPY ["CodeScanning.csproj", "."]
 RUN dotnet restore "./././CodeScanning.csproj"
 COPY . .
-COPY ./wwwroot/docker/Dockerfile /app/wwwroot/Dockerfile
 WORKDIR "/src/."
 RUN dotnet build "./CodeScanning.csproj" -c $BUILD_CONFIGURATION -o /app/build
 

@@ -30,6 +30,9 @@
 		<!--<Content Update="wwwroot\docker\Dockerfile">-->
 		<!--	<CopyToOutputDirectory>Always</CopyToOutputDirectory>-->
 		<!--</Content>-->
+		<Content Update="wwwroot\**">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 		<Content Update="wwwroot\docker\99microsoft-dotnet.pref">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
