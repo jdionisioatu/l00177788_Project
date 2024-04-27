@@ -75,33 +75,69 @@ namespace CodeScanning.Controllers
 
             const string allowedChars = "0123456789abcdefghijklmnopqrstuvwxyz";
             Random rnd = new Random();
-            string randomStringImageName = (Name + LaunchScanHelpers.RandomString(rnd, allowedChars, (10, 10))).ToLower(); 
+            string randomStringImageName = (LaunchScanHelpers.RandomString(rnd, allowedChars, (15, 15))).ToLower(); 
             var imageBuildParameters = new ImageBuildParameters
             {
                 BuildArgs = buildargs,
                 Tags = [randomStringImageName]
             };
             string fullPath = _webHostEnvironment.WebRootPath + "/docker";
-            using var tarball = LaunchScanHelpers.CreateTarballForDockerfileDirectory(fullPath);
-            using var dockerClient = new DockerClientConfiguration().CreateClient();
-            IProgress<JSONMessage> progress1 = new Progress<JSONMessage>();
-            IEnumerable<AuthConfig> authConfig = new List<AuthConfig>();
-            Dictionary<string, string> headers = new Dictionary<string, string>();
-            await dockerClient.Images.BuildImageFromDockerfileAsync(imageBuildParameters, tarball, authConfig, headers, progress1);
-            tarball.Dispose();
+            
+            
 
-            var containerParameters = new CreateContainerParameters
+            new Thread(() =>
             {
-                Name = randomStringImageName + "run",
-                ArgsEscaped = true,
-                Image = randomStringImageName,
-                Env = [ "defectdojourl=https://defectdojo.collegefan.org", "defectdojotoken=" + settings.defectDojoApiToken,
+                using var tarball = LaunchScanHelpers.CreateTarballForDockerfileDirectory(fullPath);
+                using var dockerClient = new DockerClientConfiguration().CreateClient();
+                IProgress<JSONMessage> progress1 = new Progress<JSONMessage>();
+                IEnumerable<AuthConfig> authConfig = new List<AuthConfig>();
+                Dictionary<string, string> headers = new Dictionary<string, string>();
+                var buildImaage =dockerClient.Images.BuildImageFromDockerfileAsync(imageBuildParameters, tarball, authConfig, headers, progress1);
+                tarball.Dispose();
+                buildImaage.Wait();
+                var containerParameters = new CreateContainerParameters
+                {
+                    Name = randomStringImageName + "run",
+                    ArgsEscaped = true,
+                    Image = randomStringImageName,
+                    Env = [ "defectdojourl=https://defectdojo.collegefan.org", "defectdojotoken=" + settings.defectDojoApiToken,
                     "branch=" + Branch, "giturl=\"" + giturl + "\"", "repository_name=" + Name ]
-            };
-            CreateContainerResponse createdContainer = await dockerClient.Containers.CreateContainerAsync(containerParameters);
+                };
+                var createdContainer = dockerClient.Containers.CreateContainerAsync(containerParameters);
+                createdContainer.Wait();
+                var startContainer = dockerClient.Containers.StartContainerAsync(createdContainer.Result.ID, new ContainerStartParameters());
 
-            await dockerClient.Containers.StartContainerAsync(createdContainer.ID, new ContainerStartParameters());
-            return RedirectToAction("Index", "Home");
-        }
+                startContainer.Wait();
+                var pruneContainersParameters = new ContainersPruneParameters
+                {
+                    Filters = new Dictionary<string, IDictionary<string, bool>>()
+                {
+                    {
+                        "name", new Dictionary<string, bool>()
+                        {
+                            { randomStringImageName + "run", false }
+                        }
+                    }
+                }
+                };
+                var pruneContainer = dockerClient.Containers.PruneContainersAsync(pruneContainersParameters);
+                pruneContainer.Wait();
+                var imagePruneParameters = new ImagesPruneParameters
+                {
+                    Filters = new Dictionary<string, IDictionary<string, bool>>()
+                {
+                    {
+                        "name", new Dictionary<string, bool>()
+                        {
+                            { randomStringImageName, false }
+                        }
+                    }
+                }
+                };
+                dockerClient.Images.PruneImagesAsync(imagePruneParameters);
+            }).Start();
+           
+            return View("Success");
+            }
     }
 }
