@@ -108,33 +108,9 @@ namespace CodeScanning.Controllers
                 var startContainer = dockerClient.Containers.StartContainerAsync(createdContainer.Result.ID, new ContainerStartParameters());
 
                 startContainer.Wait();
-                var pruneContainersParameters = new ContainersPruneParameters
-                {
-                    Filters = new Dictionary<string, IDictionary<string, bool>>()
-                {
-                    {
-                        "name", new Dictionary<string, bool>()
-                        {
-                            { randomStringImageName + "run", false }
-                        }
-                    }
-                }
-                };
-                var pruneContainer = dockerClient.Containers.PruneContainersAsync(pruneContainersParameters);
+                var pruneContainer = dockerClient.Containers.PruneContainersAsync();
                 pruneContainer.Wait();
-                var imagePruneParameters = new ImagesPruneParameters
-                {
-                    Filters = new Dictionary<string, IDictionary<string, bool>>()
-                {
-                    {
-                        "name", new Dictionary<string, bool>()
-                        {
-                            { randomStringImageName, false }
-                        }
-                    }
-                }
-                };
-                dockerClient.Images.PruneImagesAsync(imagePruneParameters);
+                dockerClient.Images.PruneImagesAsync();
             }).Start();
            
             return View("Success");
