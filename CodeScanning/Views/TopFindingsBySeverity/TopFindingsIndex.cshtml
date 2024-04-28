@@ -33,21 +33,20 @@
         @foreach (var finding in Model.Findings.findings)
         {
                 <tr class="border-1">
-                        <td class="border-1">@finding.Id</td>
-                        <td class="border-1">
-                            @foreach (var tag in finding.Tags)
+                    <td class="border-1">@finding.Id</td>
+                    <td class="border-1">@foreach (var tag in finding.Tags)
                     {
-                        <li>@tag</li>
+                    <li>@tag</li>
                     }
                     </td>
-                        <td class="border-1">@finding.Title<td>
-                        <td class="border-1">@finding.Severity</td>
-                        <td class="border-1">@finding.Description</td>
-                        <td class="border-1">@finding.LastStatusUpdate</td>
-                        <td class="border-1">@finding.NumericalSeverity</td>
-                        <td class="border-1">@finding.Line</td>
-                        <td class="border-1">@finding.FilePath</td>
-                        <td class="border-1">@finding.Created</td>
+                    <td class="border-1">@finding.Title</td>
+                    <td class="border-1">@finding.Severity</td>
+                    <td class="border-1">@finding.Description</td>
+                    <td class="border-1">@finding.LastStatusUpdate</td>
+                    <td class="border-1">@finding.NumericalSeverity</td>
+                    <td class="border-1">@finding.Line</td>
+                    <td class="border-1">@finding.FilePath</td>
+                    <td class="border-1">@finding.Created</td>
                 </tr>
                 
         }
