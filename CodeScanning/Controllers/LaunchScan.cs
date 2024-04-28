@@ -110,7 +110,8 @@ namespace CodeScanning.Controllers
                 startContainer.Wait();
                 var pruneContainer = dockerClient.Containers.PruneContainersAsync();
                 pruneContainer.Wait();
-                dockerClient.Images.PruneImagesAsync();
+                var pruneImages = dockerClient.Images.PruneImagesAsync();
+                pruneImages.Wait();
             }).Start();
            
             return View("Success");

@@ -10,7 +10,12 @@
 @if (SignInManager.IsSignedIn(User))
 {
     <!--<h2>@ViewBag.Title.</h2>-->
-        @Html.AntiForgeryToken()
+    @Html.AntiForgeryToken()
+    if(Model.SettingsNotFound)
+    {
+        <h1 class="display-4">Settings not found, please go to the settings page</h1>
+    } else
+    {
         <div class="form-group">
             <h1 class="display-4">Repositories found</h1>
             <table>
@@ -60,6 +65,7 @@
         }
         </table>
     </div>
+    }
 }
 else
 {

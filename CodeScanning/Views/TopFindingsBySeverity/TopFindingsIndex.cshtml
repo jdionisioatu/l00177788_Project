@@ -1,0 +1,66 @@
+﻿@model CodeScanning.ViewModels.TopFindingsViewModel
+@using Microsoft.AspNetCore.Identity
+@using CodeScanning
+@using CodeScanning.Controllers
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@{
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+@if (SignInManager.IsSignedIn(User))
+{
+    <!--<h2>@ViewBag.Title.</h2>-->
+    if(Model.SettingsNotFound)
+    {
+        <h1 class="display-4">Settings not found, please go to the settings page</h1>
+    } else
+    {
+        <div class="table-responsive-xxl">
+            <h1 class="display-4">Top 50 Findings</h1>
+            <table class="table-responsive-xxl">
+                <tr class="border-1">
+                    <th class="border-1">Finding ID</th>
+                    <th class="border-1">Tags</th>
+                    <th class="border-1">Title</th>
+                    <th class="border-1">Severity</th>
+                    <th class="border-1">Description</th>
+                    <th class="border-1">Last Status Update</th>
+                    <th class="border-1">Numerical Severity</th>
+                    <th class="border-1">Line</th>
+                    <th class="border-1">File Path</th>
+                    <th class="border-1">Created</th>
+                </tr>  
+        @foreach (var finding in Model.Findings.findings)
+        {
+                <tr class="border-1">
+                        <td class="border-1">@finding.Id</td>
+                        <td class="border-1">
+                            @foreach (var tag in finding.Tags)
+                    {
+                        <li>@tag</li>
+                    }
+                    </td>
+                        <td class="border-1">@finding.Title<td>
+                        <td class="border-1">@finding.Severity</td>
+                        <td class="border-1">@finding.Description</td>
+                        <td class="border-1">@finding.LastStatusUpdate</td>
+                        <td class="border-1">@finding.NumericalSeverity</td>
+                        <td class="border-1">@finding.Line</td>
+                        <td class="border-1">@finding.FilePath</td>
+                        <td class="border-1">@finding.Created</td>
+                </tr>
+                
+        }
+        </table>
+    </div>
+    }
+}
+else
+{
+    <h1> Access Denied</h1>
+}
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
