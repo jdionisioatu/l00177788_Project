@@ -43,6 +43,10 @@ namespace CodeScanning.Controllers
                 var httpClient = new HttpClient();
                 model.GitHubApiServiceModel = new GitHubApiService(httpClient ,settings.gitHubToken, settings.gitHubUserNameOrOrgName, organizational);
                 await model.GitHubApiServiceModel.GetRepositoriesAsync();
+                if (model.GitHubApiServiceModel.getApiError())
+                {
+                    return View("Errors/GitHubApiError");
+                }
                 
             } else
             {
