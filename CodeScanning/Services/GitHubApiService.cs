@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Build.Framework;
 
 namespace CodeScanning.Services
 {
@@ -13,6 +14,7 @@ namespace CodeScanning.Services
         private string gitHubPAT;
         private string gitHubUserOrOrganization;
         private bool organizational;
+        private bool apiError = false;
 
         private readonly HttpClient _httpClient;
 
@@ -46,7 +48,15 @@ namespace CodeScanning.Services
                     uri = new String($"/users/{gitHubUserOrOrganization}/repos?per_page=30&page={page}");
                 }
                 var response = await _httpClient.GetAsync(uri);
-                response.EnsureSuccessStatusCode();
+                try
+                {
+                    response.EnsureSuccessStatusCode();
+                }
+                catch (HttpRequestException)
+                {
+                    apiError = true;
+                    return;
+                }
 
                 var content = await response.Content.ReadAsStringAsync();
                 var githubRepositories = JsonSerializer.Deserialize<List<GithubRepository>>(content);
@@ -99,6 +109,8 @@ namespace CodeScanning.Services
 
             return branches;
         }
+
+        public bool getApiError() { return this.apiError; }
 
         private class GithubRepository
         {

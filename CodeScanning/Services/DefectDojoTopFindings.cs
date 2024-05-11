@@ -12,6 +12,7 @@ namespace CodeScanning.Services
         public Collection<Finding> findings;
         private readonly string defectDojoApiKey;
         private readonly HttpClient _httpClient;
+        private bool apiError = false;
 
         public DefectDojoTopFindings(HttpClient httpClient, string defectDojoApiKey)
         {
@@ -29,7 +30,15 @@ namespace CodeScanning.Services
         {
             var uri = new String("api/v2/findings/?limit=50&o=severity");
             var response = await _httpClient.GetAsync(uri);
-            response.EnsureSuccessStatusCode();
+            try
+            {
+                response.EnsureSuccessStatusCode();
+            }
+            catch (HttpRequestException)
+            {
+                apiError = true;
+                return;
+            }
 
             var content = await response.Content.ReadAsStringAsync();
             var apiresponse = JsonSerializer.Deserialize<ApiResponse>(content);
@@ -54,7 +63,9 @@ namespace CodeScanning.Services
                 };
                 findings.Add(newfinding);
             }
-        } 
+        }
+
+        public bool getApiError() { return apiError; }
         
         public class ApiResponse
         {

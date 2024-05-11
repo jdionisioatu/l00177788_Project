@@ -34,6 +34,10 @@ namespace CodeScanning.Controllers
                 var httpClient = new HttpClient();
                 model.Findings = new DefectDojoTopFindings(httpClient, settings.defectDojoApiToken);
                 await model.Findings.GetFindingsAsync();
+                if (model.Findings.getApiError())
+                {
+                    return View("Errors/DDApiError");
+                }
             }
             else
             {
