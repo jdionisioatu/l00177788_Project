@@ -19,7 +19,7 @@
         @Html.HiddenFor(m => m.Settings.Id)
     }
     <div class="form-group">
-        @Html.LabelFor(m => m.Settings.gitHubApiType, new { @class = "col-md-2 control-label" })
+        <label class="control-label">Please enter the GitHub API Type</label>
         <div class="col-md-10">
             <select asp-for="Settings.gitHubApiType">
                 <option value="Individual">Individual</option>
@@ -29,21 +29,21 @@
         </div>
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.Settings.gitHubUserNameOrOrgName, new { @class = "col-md-2 control-label" })
+        <label class="control-label">Please enter the GitHub User Name or Organization Name</label>
         <div class="col-md-10">
             @Html.TextBoxFor(m => m.Settings.gitHubUserNameOrOrgName, new { @class = "form-control" })
              @Html.ValidationMessageFor(m => m.Settings.gitHubUserNameOrOrgName, "", new { @class = "text-danger" })
          </div>
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.Settings.gitHubToken, new { @class = "col-md-2 control-label" })
+        <label class="control-label">Please enter the GitHub Personal Access Token with read access to the repositories</label>
         <div class="col-md-10">
             @Html.PasswordFor(m => m.Settings.gitHubToken, new { @class = "form-control" })
             @Html.ValidationMessageFor(m => m.Settings.gitHubToken, "", new { @class = "text-danger" })
         </div>
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.Settings.defectDojoApiToken, new { @class = "col-md-2 control-label" })
+            <label class="control-label">Please enter the DefectDojo API Key</label>
         <div class="col-md-10">
             @Html.PasswordFor(m => m.Settings.defectDojoApiToken, new { @class = "form-control" })
             @Html.ValidationMessageFor(m => m.Settings.defectDojoApiToken, "", new { @class = "text-danger" })
