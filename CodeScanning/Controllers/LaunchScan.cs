@@ -21,13 +21,21 @@ namespace CodeScanning.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-
+        /// <summary>
+        /// Launch Scan Constructor
+        /// </summary>
+        /// <param name="context">The Application DB Context</param>
+        /// <param name="webHostEnvironment">The web Host environment</param>
         public LaunchScan(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
         }
 
+        /// <summary>
+        /// Index method for the Launch Scan Controller
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> Index()
         {
             LaunchScanViewModel model = new();
@@ -56,11 +64,23 @@ namespace CodeScanning.Controllers
             return View("LaunchScanIndex",model);
         }
 
+        /// <summary>
+        /// For future use
+        /// </summary>
+        /// <param name="pagenumber">page number to display</param>
+        /// <returns></returns>
         public IActionResult IndexWithPage(int pagenumber)
         {
             return View();
         }
 
+        /// <summary>
+        /// Scan method for the Launch Scan Controller
+        /// </summary>
+        /// <param name="Id">Id of the github repository</param>
+        /// <param name="Name">name of the github repository</param>
+        /// <param name="Branch">branch of the github repository</param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Scan(int Id, string Name, string Branch)
