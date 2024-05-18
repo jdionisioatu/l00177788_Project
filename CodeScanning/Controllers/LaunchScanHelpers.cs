@@ -2,7 +2,11 @@
 
 internal static class LaunchScanHelpers
 {
-
+    /// <summary>
+    /// Method to create a tarball for a directory containing a Dockerfile
+    /// </summary>
+    /// <param name="directory">Directory to create the tarball from</param>
+    /// <returns></returns>
     public static Stream CreateTarballForDockerfileDirectory(string directory)
     {
         var tarball = new MemoryStream();
@@ -47,6 +51,13 @@ internal static class LaunchScanHelpers
         return tarball;
     }
 
+    /// <summary>
+    /// Method that generates a random string
+    /// </summary>
+    /// <param name="rnd">random instance</param>
+    /// <param name="allowedChars">string of allowed charactres</param>
+    /// <param name="length">legnth of the string to generate</param>
+    /// <returns></returns>
     public static string RandomString(
         this Random rnd,
         string allowedChars,

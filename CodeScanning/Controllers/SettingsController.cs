@@ -19,6 +19,10 @@ namespace CodeScanning.Controllers
     {
         private readonly ApplicationDbContext _context;
 
+        /// <summary>
+        /// Constructor of the Settings Controller
+        /// </summary>
+        /// <param name="context">Db context</param>
         public SettingsController(ApplicationDbContext context)
         {
             _context = context;
@@ -70,7 +74,11 @@ namespace CodeScanning.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        // GET: Settings/Edit/5
+        /// <summary>
+        /// Update a given setting
+        /// </summary>
+        /// <param name="id">Id of the setting to update</param>
+        /// <returns></returns>
         public async Task<IActionResult> Update(int? id)
         {
 
@@ -109,18 +117,15 @@ namespace CodeScanning.Controllers
                 
              }
 
-            /*DockerClient client = new DockerClientConfiguration().CreateClient();
-            await client.Containers.CreateContainerAsync(new CreateContainerParameters()
-            {
-                Image = "fedora/memcached",
-                HostConfig = new HostConfig()
-                {
-                    DNS = new[] { "8.8.8.8", "8.8.4.4" }
-                }
-            });*/
+            
             return RedirectToAction("Index", "Home");
         }
 
+        /// <summary>
+        /// Check if the settings exists
+        /// </summary>
+        /// <param name="id">Id of the settings</param>
+        /// <returns></returns>
         private bool SettingsExists(int id)
         {
             return _context.Settings.Any(e => e.Id == id);
