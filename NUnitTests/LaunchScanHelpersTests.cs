@@ -26,6 +26,7 @@ namespace NUnitTests
         [Test]
         public void TestRandomStringThreeChars()
         {
+            _randomString = LaunchScanHelpers.RandomString(_random, "ABCDEFG", (3, 3));
             Assert.That(_randomString, Has.Length.EqualTo(3));
         }
 
